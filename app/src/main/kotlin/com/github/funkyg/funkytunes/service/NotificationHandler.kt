@@ -87,7 +87,8 @@ class NotificationHandler(private val service: MusicService) : BroadcastReceiver
 
     private fun updateLoadingNotification() {
 		notificationBuilder.setContentText(torrentManager.getDownloadSpeed())
-        service.startForeground(NotificationId, notificationBuilder.build())
+		notificationManager.notify(NotificationId, notificationBuilder.build())
+//        service.startForeground(NotificationId, notificationBuilder.build())
         handler.postDelayed(UpdateLoadingNotificationRunnable, 1000)
     }
 
