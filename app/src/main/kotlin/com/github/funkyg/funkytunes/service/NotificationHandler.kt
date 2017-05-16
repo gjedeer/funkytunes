@@ -73,16 +73,20 @@ class NotificationHandler(private val service: MusicService) : BroadcastReceiver
         updateLoadingNotification()
     }
 
-    private fun updateLoadingNotification() {
+	private val notificationBuilder by lazy {
         val contentIntent = PendingIntent.getActivity(service, RequestCode,
                 Intent(service, PlayingQueueActivity::class.java), PendingIntent.FLAG_CANCEL_CURRENT)
-        val notificationBuilder = NotificationCompat.Builder(service)
+        NotificationCompat.Builder(service)
                 .setContentTitle(service.getString(R.string.notification_loading_title))
                 .setContentText(torrentManager.getDownloadSpeed())
                 .setContentIntent(contentIntent)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setProgress(0, 0, true)
+				.setProgress(0, 0, true)
+	}
+
+    private fun updateLoadingNotification() {
+		notificationBuilder.setContentText(torrentManager.getDownloadSpeed())
         service.startForeground(NotificationId, notificationBuilder.build())
         handler.postDelayed(UpdateLoadingNotificationRunnable, 1000)
     }
