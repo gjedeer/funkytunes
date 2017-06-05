@@ -45,7 +45,7 @@ class MusicService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        torrentManager.stop()
+        torrentManager.destroy()
         notificationHandler.stop()
         removePlaybackInterface(notificationHandler)
     }
@@ -100,6 +100,11 @@ class MusicService : Service() {
         pause()
         currentTrack++
         playTrack()
+    }
+
+    fun stop() {
+        mediaPlayer?.stop()
+        torrentManager.stop()
     }
 
     fun playTrack(index: Int) {
