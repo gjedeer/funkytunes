@@ -126,14 +126,16 @@ class NotificationHandler(private val service: MusicService) : BroadcastReceiver
         Thread(Runnable {
             val remoteView = RemoteViews(BuildConfig.APPLICATION_ID, R.layout.player_notification)
             remoteView.setOnClickPendingIntent(R.id.notificationStop, createPendingIntent(ActionStop))
+            remoteView.setTextViewText(R.id.notificationArtist, currentSong!!.artist)
+            remoteView.setTextViewText(R.id.notificationSongName, currentSong!!.name)
             val notificationBuilder = NotificationCompat.Builder(service)
 
-            notificationBuilder.addAction(R.drawable.ic_skip_previous_black_24dp,
+            notificationBuilder.addAction(R.drawable.ic_skip_previous_white_24dp,
                     service.getString(R.string.previous), createPendingIntent(ActionPrev))
 
             addPlayPauseAction(notificationBuilder)
 
-            notificationBuilder.addAction(R.drawable.ic_skip_next_black_24dp,
+            notificationBuilder.addAction(R.drawable.ic_skip_next_white_24dp,
                     service.getString(R.string.next), createPendingIntent(ActionNext))
 
             val contentIntent = PendingIntent.getActivity(service, RequestCode,
@@ -155,6 +157,7 @@ class NotificationHandler(private val service: MusicService) : BroadcastReceiver
                     .setContentTitle(currentSong!!.name)
                     .setContentText(currentSong!!.artist)
                     .setCustomBigContentView(remoteView)
+                    .setCustomContentView(remoteView)
 
             service.startForeground(NotificationId, notificationBuilder.build())
         }).start()
@@ -162,10 +165,10 @@ class NotificationHandler(private val service: MusicService) : BroadcastReceiver
 
     private fun addPlayPauseAction(builder: NotificationCompat.Builder) {
         if (service.isPlaying()) {
-            builder.addAction(R.drawable.ic_pause_black_24dp, service.getString(R.string.pause),
+            builder.addAction(R.drawable.ic_pause_white_24dp, service.getString(R.string.pause),
                     createPendingIntent(ActionPause))
         } else {
-            builder.addAction(R.drawable.ic_play_arrow_black_24dp, service.getString(R.string.play),
+            builder.addAction(R.drawable.ic_play_arrow_white_24dp, service.getString(R.string.play),
                     createPendingIntent(ActionResume))
         }
     }
