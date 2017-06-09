@@ -119,6 +119,11 @@ class MusicService : Service() {
      * Requests {@link #currentTrack} as torrent, and starts playing it on FILE_COMPLETED.
      */
     private fun playTrack() {
+		Handler(Looper.getMainLooper()).post({
+			playbackListeners.forEach { l ->
+				l.onEnqueueTrack(currentTrack)
+			}
+		})
         torrentManager.requestSong(currentTrack, { file ->
             Log.i(Tag, "Playing track " + file.name)
             mediaPlayer = MediaPlayer.create(this, Uri.fromFile(file))
@@ -134,17 +139,24 @@ class MusicService : Service() {
 
             Handler(Looper.getMainLooper()).post({
                 playbackListeners.forEach { l ->
-                    l.onPlaySong(currentSongInfo!!)
+                    l.onPlaySong(currentSongInfo!!, currentTrack)
                     l.onResumed()
                 }
             })
-        })
+        }, {index: Int, progress: Int -> 
+            Handler(Looper.getMainLooper()).post({
+                playbackListeners.forEach { l ->
+                    l.onProgress(index, progress)
+                }
+            })
+		})
     }
 
     /**
      * Callback when the current song is over, starts the next track.
      */
     private fun songCompleted() {
+		Log.i(Tag, "Song completed")
         if (currentTrack + 1 >= playlist!!.size) {
             playbackListeners.forEach { l -> l.onPaused() }
             stopSelf()
